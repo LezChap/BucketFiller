@@ -1,0 +1,9 @@
+modLoader="javafml"
+loaderVersion="[28,)" #mandatory (28 is current forge version)
+[[mods]]
+modId="reallysimpletanks"
+version="${file.jarVersion}"
+displayName="Really Simple Tanks"
+description='''
+This mod adds a fairly simple tank for fluids and buckets.
+'''

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "reallysimpletanks:block/basictank" },
+    "facing=south": { "model": "reallysimpletanks:block/basictank", "y": 180 },
+    "facing=west": { "model": "reallysimpletanks:block/basictank", "y": 270 },
+    "facing=east": { "model": "reallysimpletanks:block/basictank", "y": 90 }
+  }
+}
