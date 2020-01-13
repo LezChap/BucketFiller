@@ -1,5 +1,7 @@
 modLoader="javafml"
 loaderVersion="[28,)" #mandatory (28 is current forge version)
+issueTrackerURL="https://github.com/LezChap/ReallySimpleTanks/issues"
+
 [[mods]]
 modId="reallysimpletanks"
 version="${file.jarVersion}"
