@@ -3,32 +3,38 @@ package com.reallysimpletanks.blocks;
 import com.reallysimpletanks.compat.ModTOPDriver;
 import com.reallysimpletanks.compat.TOPDriver;
 import com.reallysimpletanks.compat.TOPInfoProvider;
+import com.reallysimpletanks.utils.Tools;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.*;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class BasicTankBlock extends Block implements TOPInfoProvider {
     public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
@@ -89,10 +95,20 @@ public class BasicTankBlock extends Block implements TOPInfoProvider {
         }
         return true;
     }
-
-    public static Direction getFacingFromEntity(BlockPos clickedBlock, LivingEntity entity) {
-        return Direction.getFacingFromVector((float) (entity.posX - clickedBlock.getX()), (float) (entity.posY - clickedBlock.getY()), (float) (entity.posZ - clickedBlock.getZ()));
-    }
+    @OnlyIn(Dist.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+        CompoundNBT compoundnbt = stack.getChildTag("BlockEntityTag");
+        ITextComponent text = new TranslationTextComponent("%s: %s mB", "Capacity", String.format("%,d", BasicTankTileEntity.CAPACITY));
+        Style style = new Style();
+        if (compoundnbt != null) {
+            if (compoundnbt.contains("tank")) {
+                FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(compoundnbt.getCompound("tank"));
+                text = Tools.formatFluid(fluidStack, BasicTankTileEntity.CAPACITY);
+            }
+        }
+        tooltip.add(text.setStyle(style.setColor(TextFormatting.GREEN)));
+        }
 
     @Override
     public TOPDriver getProbeDriver() {
