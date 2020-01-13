@@ -5,7 +5,7 @@ This mod adds a tank in which to store fluids. With the Fluid API changes in For
  
 
 Roadmap for the near future:
-- [ ] Ability to fill/empty the tank by right clicking with a bucket.
+- [x] Ability to fill/empty the tank by right clicking with a bucket.
 - [x] Confirm pipes can fill/extract fluids (or implement that functionality if it isn't working) --(Tested to work with: Xnet, Floppers, and Refined Storage, but needs to put buckets from automation in the correct slots)
 - [ ] Multiple versions of the Tank with larger capacities.
 - [ ] Ability to suck or push fluids into adjacent blocks which support that functionality (other tanks or machines with tanks)
