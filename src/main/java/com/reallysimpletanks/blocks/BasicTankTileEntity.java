@@ -90,7 +90,7 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
             if (item instanceof BucketItem && item != Items.BUCKET) {
                 if (outputStack.isEmpty() || ((outputStack.getItem() == Items.BUCKET) && outputStack.getCount() <outputStack.getMaxStackSize()))
                 {
-                    FluidActionResult fillResult = FluidUtil.tryEmptyContainerAndStow(inputStack, internalTank, h, Integer.MAX_VALUE, null, true);
+                    FluidActionResult fillResult = FluidUtil.tryEmptyContainer(inputStack, internalTank, Integer.MAX_VALUE, null, true);
                     if (fillResult.isSuccess()) {
                         h.extractItem(0, 1, false);
                         h.insertItem(2, fillResult.getResult(), false);
@@ -101,7 +101,7 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
             outputStack = h.getStackInSlot(3);
             item = inputStack.getItem();
             if (item == Items.BUCKET && outputStack.isEmpty()) {
-                FluidActionResult fillResult = FluidUtil.tryFillContainerAndStow(inputStack, internalTank, h, Integer.MAX_VALUE, null, true);
+                FluidActionResult fillResult = FluidUtil.tryFillContainer(inputStack, internalTank, Integer.MAX_VALUE, null, true);
                 if (fillResult.isSuccess()) {
                     h.extractItem(1, 1, false);
                     h.insertItem(3, fillResult.getResult(), false);
@@ -167,7 +167,17 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
 
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return stack.getItem() instanceof BucketItem;
+                Item item = stack.getItem();
+                if (!(item instanceof BucketItem)) return false;
+                if (slot == 0 || slot == 3) {
+                    if (item != Items.BUCKET) {
+                        return true;
+                    }
+                }
+                if (slot == 1 || slot == 2) {
+                    return item == Items.BUCKET;
+                }
+                return false;
             }
 
             @Nonnull

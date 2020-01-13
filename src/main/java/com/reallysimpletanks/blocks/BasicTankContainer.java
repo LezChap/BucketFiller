@@ -1,5 +1,7 @@
 package com.reallysimpletanks.blocks;
 
+import com.reallysimpletanks.utils.SlotBucketHandler;
+import com.reallysimpletanks.utils.SlotEmptyBucketHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluid;
@@ -49,10 +51,10 @@ public class BasicTankContainer extends Container {
         //}
 
         tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            addSlot(new SlotItemHandler(h, 0, 46, 8));
-            addSlot(new SlotItemHandler(h, 1, 118, 8));
-            addSlot(new SlotItemHandler(h, 2, 46, 44));
-            addSlot(new SlotItemHandler(h, 3, 118, 44));
+            addSlot(new SlotBucketHandler(h, 0, 46, 8));
+            addSlot(new SlotEmptyBucketHandler(h, 1, 118, 8));
+            addSlot(new SlotEmptyBucketHandler(h, 2, 46, 44));
+            addSlot(new SlotBucketHandler(h, 3, 118, 44));
         });
         layoutPlayerInventorySlots(10, 70);
 
@@ -65,8 +67,7 @@ public class BasicTankContainer extends Container {
         int fluidID = fields.get(0);
         Fluid fluid = Registry.FLUID.getByValue(fluidID);
         int amount = fields.get(1);
-        FluidStack stack = new FluidStack(fluid, amount);
-        return stack;
+        return new FluidStack(fluid, amount);
     }
 
     public int getFluidCapacity() {
