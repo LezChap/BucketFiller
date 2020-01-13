@@ -1,5 +1,8 @@
 package com.reallysimpletanks.blocks;
 
+import com.reallysimpletanks.compat.ModTOPDriver;
+import com.reallysimpletanks.compat.TOPDriver;
+import com.reallysimpletanks.compat.TOPInfoProvider;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
@@ -21,8 +24,9 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
-public class BasicTankBlock extends Block {
+public class BasicTankBlock extends Block implements TOPInfoProvider {
     public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
+    private final TOPDriver topDriver = ModTOPDriver.DRIVER;
 
     public BasicTankBlock() {
         super(Properties.create(Material.IRON)
@@ -67,6 +71,10 @@ public class BasicTankBlock extends Block {
         return Direction.getFacingFromVector((float) (entity.posX - clickedBlock.getX()), (float) (entity.posY - clickedBlock.getY()), (float) (entity.posZ - clickedBlock.getZ()));
     }
 
+    @Override
+    public TOPDriver getProbeDriver() {
+        return topDriver;
+    }
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {

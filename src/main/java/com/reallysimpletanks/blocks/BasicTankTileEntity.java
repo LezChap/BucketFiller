@@ -21,6 +21,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -115,6 +116,14 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
         });
     }
 
+    public FluidStack getFluidFromTank() {
+        return internalTank.getFluid();
+    }
+
+    public int getFluidCapacity() {
+        return CAPACITY;
+    }
+
     @Override
     public void read(CompoundNBT tag) {
         CompoundNBT invTag = tag.getCompound("inv");
@@ -195,19 +204,4 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
     public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
         return new BasicTankContainer(id, playerInventory,this, this.fields);
     }
-
-    /* //todo
-    @Override
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        TileEntity te = world.getTileEntity(data.getPos());
-        ReallySimpleTanks.LOGGER.info("Running TOP Text");
-
-        if (te instanceof BasicTankTileEntity) {
-            BasicTankTileEntity bfTE = (BasicTankTileEntity) te;
-            probeInfo.horizontal()
-                    .text(TextFormatting.BLUE + "" + bfTE.getFluid().getDisplayName() + ": " + bfTE.getFluidAmount() + "mb");
-            probeInfo.horizontal(probeInfo.defaultLayoutStyle().borderColor(0xffff0000))
-                    .progress(bfTE.getFluidAmount() % bfTE.getCapacity(), 100, probeInfo.defaultProgressStyle().suffix("%"));
-        }
-    } */
 }

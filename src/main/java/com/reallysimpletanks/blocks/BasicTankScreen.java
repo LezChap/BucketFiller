@@ -2,6 +2,7 @@ package com.reallysimpletanks.blocks;
 
 import com.reallysimpletanks.ReallySimpleTanks;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.reallysimpletanks.utils.Tools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -12,7 +13,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 
@@ -40,15 +40,7 @@ public class BasicTankScreen extends ContainerScreen<BasicTankContainer> {
     protected void renderHoveredToolTip(int mouseX, int mouseY) {
         if (isPointInRegion(82, 8, 16, 52, mouseX, mouseY)) {
             FluidStack stack = container.getFluidInTank();
-            String s1 = String.format("%,d", stack.getAmount());
-            String s2 = String.format("%,d", container.getFluidCapacity());
-            ITextComponent text;
-            if (stack.isEmpty()) {
-                text = new TranslationTextComponent("%s / %s mB", s1, s2);
-            } else {
-                ITextComponent fluidName = stack.getDisplayName();
-                text = new TranslationTextComponent("%s: %s / %s mB", fluidName, s1, s2);
-            }
+            ITextComponent text = Tools.formatFluid(stack, container.getFluidCapacity());
             renderTooltip(text.getFormattedText(), mouseX, mouseY);
         }
         super.renderHoveredToolTip(mouseX, mouseY);
