@@ -54,7 +54,7 @@ public class ReallySimpleTanks {
 
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
-            event.getRegistry().register(new BlockItem(ModBlocks.BASICTANK, new Item.Properties().group(ItemGroup.MISC)).setRegistryName("basictank"));
+            event.getRegistry().register(new BlockItem(ModBlocks.BASICTANK, new Item.Properties().maxStackSize(1).group(ItemGroup.MISC)).setRegistryName("basictank"));
         }
 
         @SubscribeEvent
