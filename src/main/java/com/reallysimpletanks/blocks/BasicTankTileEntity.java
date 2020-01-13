@@ -1,5 +1,9 @@
 package com.reallysimpletanks.blocks;
 
+import com.reallysimpletanks.ReallySimpleTanks;
+import com.reallysimpletanks.utils.CustomCombinedInvWrapper;
+import com.reallysimpletanks.utils.InputItemStackHandler;
+import com.reallysimpletanks.utils.OutputItemStackHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -36,13 +40,18 @@ import javax.annotation.Nullable;
 import static com.reallysimpletanks.blocks.ModBlocks.BASICTANK_TILEENTITY;
 
 public class BasicTankTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider {
-
     public static final int FIELDS_COUNT = 3;
     public static final int CAPACITY = FluidAttributes.BUCKET_VOLUME * 16;
+    protected ItemStackHandler inputSlots;
+    protected ItemStackHandler outputSlots;
+    private ItemStackHandler inputSlotsWrapper;
+    private ItemStackHandler outputSlotsWrapper;
+    private final LazyOptional<IItemHandler> externalHandler = LazyOptional.of(() -> new CustomCombinedInvWrapper(inputSlotsWrapper, outputSlotsWrapper));
+    private final LazyOptional<IItemHandler> internalHandler = LazyOptional.of(() -> new CustomCombinedInvWrapper(inputSlots, outputSlots));
+
 
     protected FluidTank internalTank = new FluidTank(CAPACITY);
     private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> internalTank);
-    private LazyOptional<IItemHandler> handler = LazyOptional.of(this::createHandler);
 
 
     protected final IIntArray fields = new IIntArray() {
@@ -75,6 +84,10 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
 
     public BasicTankTileEntity() {
         super(BASICTANK_TILEENTITY);
+        inputSlots = createInputHandler();
+        outputSlots = createOutputHandler();
+        inputSlotsWrapper = new InputItemStackHandler(inputSlots);
+        outputSlotsWrapper = new OutputItemStackHandler(outputSlots);
     }
 
     @Override
@@ -83,7 +96,7 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
             return;
         }
 
-        handler.ifPresent(h ->{
+        internalHandler.ifPresent(h ->{
             ItemStack inputStack = h.getStackInSlot(0);
             ItemStack outputStack = h.getStackInSlot(2);
             Item item = inputStack.getItem();
@@ -127,7 +140,7 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
     @Override
     public void read(CompoundNBT tag) {
         CompoundNBT invTag = tag.getCompound("inv");
-        handler.ifPresent(h -> ((INBTSerializable<CompoundNBT>) h).deserializeNBT(invTag));
+        internalHandler.ifPresent(h -> ((INBTSerializable<CompoundNBT>) h).deserializeNBT(invTag));
         super.read(tag);
         if (tag.contains("tank")) {
             internalTank.readFromNBT(tag.getCompound("tank"));
@@ -136,7 +149,7 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
-        handler.ifPresent(h -> {
+        internalHandler.ifPresent(h -> {
             CompoundNBT compound = ((INBTSerializable<CompoundNBT>) h).serializeNBT();
             tag.put("inv", compound);
         });
@@ -158,8 +171,8 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
         }
     }
 
-    private IItemHandler createHandler() {
-        return new ItemStackHandler(4) {
+    private ItemStackHandler createInputHandler() {
+        return new ItemStackHandler(2) {
             @Override
             protected void onContentsChanged(int slot) {
                 markDirty();
@@ -169,13 +182,45 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 Item item = stack.getItem();
                 if (!(item instanceof BucketItem)) return false;
-                if (slot == 0 || slot == 3) {
+                if (slot == 0) {
                     if (item != Items.BUCKET) {
                         return true;
                     }
                 }
-                if (slot == 1 || slot == 2) {
+                if (slot == 1) {
                     return item == Items.BUCKET;
+                }
+                return false;
+            }
+
+            @Nonnull
+            @Override
+            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+                Item item = stack.getItem();
+                if (!(item instanceof BucketItem)) {
+                    return stack;
+                }
+                return super.insertItem(slot, stack, simulate);
+            }
+        };
+    }
+
+    private ItemStackHandler createOutputHandler() {
+        return new ItemStackHandler(2) {
+            @Override
+            protected void onContentsChanged(int slot) {
+                markDirty();
+            }
+
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                Item item = stack.getItem();
+                if (!(item instanceof BucketItem)) return false;
+                if (slot == 0) {
+                    return item == Items.BUCKET;
+                }
+                if (slot == 1) {
+                    return (item != Items.BUCKET);
                 }
                 return false;
             }
@@ -196,7 +241,14 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return handler.cast();
+            if (world != null && world.getBlockState(pos).getBlock() != this.getBlockState().getBlock()) {//if something is broken
+                ReallySimpleTanks.LOGGER.debug("reallysimpletanks:basictank at X:" + pos.getX() + " Y: " + pos.getY() + " Z: " + pos.getZ() + "Throwing Block Mismatch error when getting ItemHandler Capability.");
+                return internalHandler.cast();
+            }
+            if (side == null) {
+                return internalHandler.cast();
+            }
+            return externalHandler.cast();
         }
         if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return fluidHandler.cast();
