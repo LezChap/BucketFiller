@@ -35,7 +35,9 @@ public class BasicTankScreen extends ContainerScreen<BasicTankContainer> {
     protected void init() {
         super.init();
         this.addButton(new DumpButton(container, this.guiLeft + 81, this.guiTop + 61, 18, 7, "", button -> {
-          container.dumpTank();
+            if (hasControlDown()) {
+                container.dumpTank();
+            }
         }));
     }
 
