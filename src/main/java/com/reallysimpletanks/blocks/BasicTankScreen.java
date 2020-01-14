@@ -2,9 +2,11 @@ package com.reallysimpletanks.blocks;
 
 import com.reallysimpletanks.ReallySimpleTanks;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.reallysimpletanks.client.DumpButton;
 import com.reallysimpletanks.utils.Tools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.AtlasTexture;
@@ -13,8 +15,12 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class BasicTankScreen extends ContainerScreen<BasicTankContainer> {
 
@@ -26,6 +32,14 @@ public class BasicTankScreen extends ContainerScreen<BasicTankContainer> {
     }
 
     @Override
+    protected void init() {
+        super.init();
+        this.addButton(new DumpButton(container, this.guiLeft + 81, this.guiTop + 61, 18, 7, "", button -> {
+          container.dumpTank();
+        }));
+    }
+
+    @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         this.renderBackground();
         super.render(mouseX, mouseY, partialTicks);
@@ -34,6 +48,12 @@ public class BasicTankScreen extends ContainerScreen<BasicTankContainer> {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        for (Widget widget : this.buttons) {
+            if (widget.isHovered() && widget instanceof DumpButton) {
+                List<String> tooltip = Arrays.asList(new TranslationTextComponent("misc.reallysimpletanks.dump_tank1").getFormattedText(), new TranslationTextComponent("misc.reallysimpletanks.dump_tank2").getFormattedText());
+                renderTooltip(tooltip, mouseX - guiLeft, mouseY - guiTop);
+            }
+        }
     }
 
     @Override

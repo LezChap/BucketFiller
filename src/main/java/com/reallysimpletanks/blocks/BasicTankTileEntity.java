@@ -13,6 +13,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -50,7 +52,19 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
     private final LazyOptional<IItemHandler> internalHandler = LazyOptional.of(() -> new CustomCombinedInvWrapper(inputSlots, outputSlots));
 
 
-    protected FluidTank internalTank = new FluidTank(CAPACITY);
+    protected FluidTank internalTank = new FluidTank(CAPACITY){
+        @Override
+        protected void onContentsChanged() {
+            super.onContentsChanged();
+            markDirty();
+        }
+
+        @Override
+        public void setFluid(FluidStack stack) {
+            super.setFluid(stack);
+            this.onContentsChanged();
+        }
+    };
     private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> internalTank);
 
 
@@ -137,6 +151,10 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
         return CAPACITY;
     }
 
+    public void dumpTank() {
+        internalTank.setFluid(FluidStack.EMPTY);
+    }
+
     @Override
     public void read(CompoundNBT tag) {
         CompoundNBT invTag = tag.getCompound("inv");
@@ -160,6 +178,10 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT tags = super.getUpdateTag();
+        internalHandler.ifPresent(h -> {
+            CompoundNBT compound = ((INBTSerializable<CompoundNBT>) h).serializeNBT();
+            tags.put("inv", compound);
+        });
         tags.put("tank", this.internalTank.writeToNBT(new CompoundNBT()));
         return tags;
     }
@@ -169,6 +191,23 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
         if (tag.contains("tank")) {
             internalTank.readFromNBT(tag.getCompound("tank"));
         }
+        CompoundNBT invTag = tag.getCompound("inv");
+        internalHandler.ifPresent(h -> ((INBTSerializable<CompoundNBT>) h).deserializeNBT(invTag));
+    }
+
+
+    @Nullable
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        CompoundNBT tag = new CompoundNBT();
+        tag = write(tag);
+        return new SUpdateTileEntityPacket(getPos(), 1, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        CompoundNBT tag = pkt.getNbtCompound();
+        read(tag);
     }
 
     private ItemStackHandler createInputHandler() {
@@ -264,6 +303,6 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
     @Nullable
     @Override
     public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new BasicTankContainer(id, playerInventory,this, this.fields);
+        return new BasicTankContainer(id, getPos(), playerInventory, this, this.fields);
     }
 }

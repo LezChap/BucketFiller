@@ -11,6 +11,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
@@ -65,7 +66,8 @@ public class ReallySimpleTanks {
         @SubscribeEvent
         public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> event) {
             event.getRegistry().register(IForgeContainerType.create((windowID, inv, data) -> {
-                return new BasicTankContainer(windowID, inv);
+                BlockPos pos = data.readBlockPos();
+                return new BasicTankContainer(windowID, pos, inv);
             }).setRegistryName("basictank"));
         }
     }

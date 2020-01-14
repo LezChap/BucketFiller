@@ -1,4 +1,5 @@
 {
-  "block.reallysimpletanks.basictank": "Basic Tank"
-
+  "block.reallysimpletanks.basictank": "Basic Tank",
+  "misc.reallysimpletanks.dump_tank1": "Hold CTRL and Left-Click to empty(void)",
+  "misc.reallysimpletanks.dump_tank2": "        the contents of the tank."
 }

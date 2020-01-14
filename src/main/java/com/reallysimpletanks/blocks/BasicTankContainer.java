@@ -1,5 +1,8 @@
 package com.reallysimpletanks.blocks;
 
+import com.reallysimpletanks.ReallySimpleTanks;
+import com.reallysimpletanks.network.DumpTank;
+import com.reallysimpletanks.network.Networking;
 import com.reallysimpletanks.utils.SlotBucketHandler;
 import com.reallysimpletanks.utils.SlotEmptyBucketHandler;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,6 +16,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.IntArray;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -29,16 +33,20 @@ public class BasicTankContainer extends Container {
     private BasicTankTileEntity tileEntity;
     private IItemHandler playerInventory;
     private IIntArray fields;
+    private BlockPos pos;
 
-    public BasicTankContainer(int windowId, PlayerInventory inv) {
-        this(windowId, inv, new BasicTankTileEntity(), new IntArray(BasicTankTileEntity.FIELDS_COUNT));
+
+    public BasicTankContainer(int windowId, BlockPos posIn, PlayerInventory inv) {
+            this(windowId, posIn, inv, new BasicTankTileEntity(), new IntArray(BasicTankTileEntity.FIELDS_COUNT));
     }
 
-    public BasicTankContainer(int windowId, PlayerInventory inv, BasicTankTileEntity te, IIntArray field) {
+
+    public BasicTankContainer(int windowId, BlockPos posIn, PlayerInventory inv, BasicTankTileEntity te, IIntArray field) {
         super(BASICTANK_CONTAINER, windowId);
-        this.tileEntity = te;
         assertIntArraySize(field, BasicTankTileEntity.FIELDS_COUNT);
         this.fields = field;
+        this.tileEntity = te;
+        this.pos = posIn;
         this.playerInventory = new InvWrapper(inv);
 
         //Legacy Debug code
@@ -71,8 +79,14 @@ public class BasicTankContainer extends Container {
     }
 
     public int getFluidCapacity() {
-        return fields.get(2);
+        return tileEntity.CAPACITY;
     }
+
+    public void dumpTank() {
+        Networking.INSTANCE.sendToServer(new DumpTank(FluidStack.EMPTY, pos));
+    }
+
+    public IIntArray getFields() {return fields;}
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
