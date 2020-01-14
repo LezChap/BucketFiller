@@ -2,7 +2,10 @@ package com.reallysimpletanks.blocks;
 
 import com.reallysimpletanks.ReallySimpleTanks;
 import com.reallysimpletanks.api.TankMode;
-import com.reallysimpletanks.utils.*;
+import com.reallysimpletanks.utils.CustomCombinedInvWrapper;
+import com.reallysimpletanks.utils.EnumUtils;
+import com.reallysimpletanks.utils.InputItemStackHandler;
+import com.reallysimpletanks.utils.OutputItemStackHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -30,6 +33,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -52,7 +56,7 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
     protected  TankMode tankMode = TankMode.NORMAL;
 
 
-    protected CustomTank internalTank = new CustomTank(CAPACITY, this){
+    protected FluidTank internalTank = new FluidTank(CAPACITY){
         @Override
         protected void onContentsChanged() {
             super.onContentsChanged();
@@ -64,12 +68,8 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
             super.setFluid(stack);
             this.onContentsChanged();
         }
-
-
     };
-
     private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> internalTank);
-
 
 
     protected final IIntArray fields = new IIntArray() {

@@ -2,12 +2,7 @@ package com.reallysimpletanks.blocks;
 
 import com.reallysimpletanks.ReallySimpleTanks;
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.reallysimpletanks.api.TankMode;
 import com.reallysimpletanks.client.DumpButton;
-import com.reallysimpletanks.client.ModeButton;
-import com.reallysimpletanks.network.Networking;
-import com.reallysimpletanks.network.TankModePacket;
-import com.reallysimpletanks.utils.EnumUtils;
 import com.reallysimpletanks.utils.Tools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -24,7 +19,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,11 +39,6 @@ public class BasicTankScreen extends ContainerScreen<BasicTankContainer> {
                 container.dumpTank();
             }
         }));
-        this.addButton(new ModeButton(container, this.guiLeft + 3, this.guiTop + 3, 40, 16, button -> {
-            TankMode mode = ((ModeButton) button).getMode();
-            Networking.INSTANCE.sendToServer(new TankModePacket(mode));
-        }));
-
     }
 
     @Override
@@ -63,42 +52,9 @@ public class BasicTankScreen extends ContainerScreen<BasicTankContainer> {
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         for (Widget widget : this.buttons) {
             if (widget.isHovered() && widget instanceof DumpButton) {
-                List<String> tooltip = Arrays.asList(
-                    new TranslationTextComponent("misc.reallysimpletanks.dump_tank1").getFormattedText(),
-                    new TranslationTextComponent("misc.reallysimpletanks.dump_tank2").getFormattedText()
-                );
-                renderTooltip(tooltip, mouseX - guiLeft, mouseY - guiTop);
-            } else if (widget.isHovered() && widget instanceof ModeButton) {
-                int modeOrdinal = container.getTankMode().ordinal();
-                List<String> tooltip = new ArrayList<>();
-                switch (modeOrdinal) {
-                    case 0:  //NORMAL mode
-                        tooltip.add(new TranslationTextComponent("misc.reallysimpletanks.normal_tooltip1").getFormattedText());
-                        tooltip.add("--------------------------");
-                        tooltip.add(new TranslationTextComponent("misc.reallysimpletanks.normal_tooltip2").getFormattedText());
-                        tooltip.add(" ");
-                        break;
-                    case 1:  //EXCESS mode
-                        tooltip.add(new TranslationTextComponent("misc.reallysimpletanks.excess_tooltip1").getFormattedText());
-                        tooltip.add("--------------------------");
-                        tooltip.add(new TranslationTextComponent("misc.reallysimpletanks.excess_tooltip2").getFormattedText());
-                        tooltip.add(new TranslationTextComponent("misc.reallysimpletanks.excess_tooltip3").getFormattedText());
-                        break;
-                    case 2:  //PUMP mode
-                        tooltip.add(new TranslationTextComponent("misc.reallysimpletanks.pump_tooltip1").getFormattedText());
-                        tooltip.add("------------------------");
-                        tooltip.add(new TranslationTextComponent("misc.reallysimpletanks.pump_tooltip2").getFormattedText());
-                        tooltip.add(" ");
-                        break;
-                }
-                int nextOrdinal = modeOrdinal + 1;
-                if (nextOrdinal >= TankMode.values().length) nextOrdinal = 0;
-                String nextMode = EnumUtils.byOrdinal(nextOrdinal, TankMode.NORMAL).name();
-                tooltip.add(" ");
-                tooltip.add( new TranslationTextComponent("misc.reallysimpletanks.next_mode", nextMode).getFormattedText());
+                List<String> tooltip = Arrays.asList(new TranslationTextComponent("misc.reallysimpletanks.dump_tank1").getFormattedText(), new TranslationTextComponent("misc.reallysimpletanks.dump_tank2").getFormattedText());
                 renderTooltip(tooltip, mouseX - guiLeft, mouseY - guiTop);
             }
-
         }
     }
 
