@@ -1,8 +1,10 @@
 package com.reallysimpletanks.blocks;
 
+import com.reallysimpletanks.api.TankMode;
 import com.reallysimpletanks.compat.ModTOPDriver;
 import com.reallysimpletanks.compat.TOPDriver;
 import com.reallysimpletanks.compat.TOPInfoProvider;
+import com.reallysimpletanks.utils.EnumUtils;
 import com.reallysimpletanks.utils.Tools;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -68,7 +70,10 @@ public class BasicTankBlock extends Block implements TOPInfoProvider {
             if (FluidUtil.interactWithFluidHandler(player, handIn, worldIn, pos, hit.getFace())) return true;
             TileEntity tileEntity = worldIn.getTileEntity(pos);
             if (tileEntity instanceof INamedContainerProvider) {
-                NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tileEntity, tileEntity.getPos());
+                NetworkHooks.openGui((ServerPlayerEntity) player, (INamedContainerProvider) tileEntity, (buffer) -> {
+                    buffer.writeBlockPos(pos);
+                    buffer.writeByte((byte) ((BasicTankTileEntity) tileEntity).getTankMode().ordinal());
+                });
             } else {
                 throw new IllegalStateException("Our named container provider is missing!");
             }
@@ -80,16 +85,21 @@ public class BasicTankBlock extends Block implements TOPInfoProvider {
     public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         CompoundNBT compoundnbt = stack.getChildTag("BlockEntityTag");
+        if (compoundnbt == null) { return; }
         ITextComponent text = new TranslationTextComponent("%s: %s mB", "Capacity", String.format("%,d", BasicTankTileEntity.CAPACITY));
         Style style = new Style();
-        if (compoundnbt != null) {
-            if (compoundnbt.contains("tank")) {
-                FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(compoundnbt.getCompound("tank"));
-                text = Tools.formatFluid(fluidStack, BasicTankTileEntity.CAPACITY);
-            }
+        if (compoundnbt.contains("tank")) {
+            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(compoundnbt.getCompound("tank"));
+            text = Tools.formatFluid(fluidStack, BasicTankTileEntity.CAPACITY);
         }
-        tooltip.add(text.setStyle(style.setColor(TextFormatting.GREEN)));
+        tooltip.add(text.setStyle(style.setColor(TextFormatting.GREEN)));  //shows tank capacity/fluid contents
+
+        if (compoundnbt.contains("TankMode")) {
+            TankMode mode = EnumUtils.byOrdinal(compoundnbt.getByte("TankMode"), TankMode.NORMAL);
+            text = new TranslationTextComponent("misc.reallysimpletanks.tankMode", mode.name());
+            tooltip.add(text.setStyle(style.setColor(TextFormatting.GREEN)));  //shows tank mode
         }
+    }
 
     @Override
     public TOPDriver getProbeDriver() {

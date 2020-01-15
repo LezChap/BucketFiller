@@ -1,10 +1,12 @@
 package com.reallysimpletanks;
 
+import com.reallysimpletanks.api.TankMode;
 import com.reallysimpletanks.blocks.*;
 import com.reallysimpletanks.setup.ClientProxy;
 import com.reallysimpletanks.setup.IProxy;
 import com.reallysimpletanks.setup.ModSetup;
 import com.reallysimpletanks.setup.ServerProxy;
+import com.reallysimpletanks.utils.EnumUtils;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
@@ -67,7 +69,8 @@ public class ReallySimpleTanks {
         public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> event) {
             event.getRegistry().register(IForgeContainerType.create((windowID, inv, data) -> {
                 BlockPos pos = data.readBlockPos();
-                return new BasicTankContainer(windowID, pos, inv);
+                TankMode tankMode = EnumUtils.byOrdinal(data.readByte(), TankMode.NORMAL);
+                return new BasicTankContainer(windowID, pos, inv, tankMode);
             }).setRegistryName("basictank"));
         }
     }

@@ -9,6 +9,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -71,11 +72,15 @@ public class ModTOPDriver implements TOPDriver{
                 int tankSize = te.getFluidCapacity();
                 String amount = String.format("%,d", fluidSize);
                 String capacity = String.format("%,d", tankSize);
+                //Show tank capacity and fluid/level in TOP
                 if (stack.isEmpty()) {
                     probeInfo.text(TextFormatting.GREEN + amount + " / " + capacity + " mB");
                 } else {
                     probeInfo.text(TextFormatting.GREEN + STARTLOC + stack.getTranslationKey() + ENDLOC + ": " + amount + " / " + capacity + " mB");
                 }
+                //show TankMode in TOP
+                String tankMode = new TranslationTextComponent("misc.reallysimpletanks.tankMode", te.getTankMode().name()).getFormattedText();
+                probeInfo.text(TextFormatting.GREEN + tankMode);
                 /* TODO: Add tank progress bar
                 int color = stack.getFluid().getAttributes().getColor();
                 int tmp = 0xff555555;

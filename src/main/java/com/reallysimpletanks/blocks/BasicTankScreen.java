@@ -2,7 +2,11 @@ package com.reallysimpletanks.blocks;
 
 import com.reallysimpletanks.ReallySimpleTanks;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.reallysimpletanks.api.TankMode;
 import com.reallysimpletanks.client.DumpButton;
+import com.reallysimpletanks.client.ModeButton;
+import com.reallysimpletanks.network.Networking;
+import com.reallysimpletanks.network.TankModePacket;
 import com.reallysimpletanks.utils.Tools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -39,6 +43,11 @@ public class BasicTankScreen extends ContainerScreen<BasicTankContainer> {
                 container.dumpTank();
             }
         }));
+        this.addButton(new ModeButton(container, this.guiLeft + 3, this.guiTop + 3, 40, 16, button -> {
+            TankMode mode = ((ModeButton) button).getMode();
+            Networking.INSTANCE.sendToServer(new TankModePacket(mode));
+        }));
+
     }
 
     @Override

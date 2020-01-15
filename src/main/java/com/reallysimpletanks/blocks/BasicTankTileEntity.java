@@ -1,7 +1,9 @@
 package com.reallysimpletanks.blocks;
 
 import com.reallysimpletanks.ReallySimpleTanks;
+import com.reallysimpletanks.api.TankMode;
 import com.reallysimpletanks.utils.CustomCombinedInvWrapper;
+import com.reallysimpletanks.utils.EnumUtils;
 import com.reallysimpletanks.utils.InputItemStackHandler;
 import com.reallysimpletanks.utils.OutputItemStackHandler;
 import net.minecraft.entity.player.PlayerEntity;
@@ -51,6 +53,8 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
     private final LazyOptional<IItemHandler> externalHandler = LazyOptional.of(() -> new CustomCombinedInvWrapper(inputSlotsWrapper, outputSlotsWrapper));
     private final LazyOptional<IItemHandler> internalHandler = LazyOptional.of(() -> new CustomCombinedInvWrapper(inputSlots, outputSlots));
 
+    protected  TankMode tankMode = TankMode.NORMAL;
+
 
     protected FluidTank internalTank = new FluidTank(CAPACITY){
         @Override
@@ -78,7 +82,7 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
                 case 1:
                     return internalTank.getFluid().getAmount();
                 case 2:
-                    return internalTank.getCapacity();
+                    return tankMode.ordinal();
                 default:
                     return 0;
             }
@@ -86,6 +90,11 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
 
         @Override
         public void set(int index, int value) {
+            switch(index) {
+                case 2:
+                    tankMode = EnumUtils.byOrdinal(value, TankMode.NORMAL);
+                    break;
+            }
 
         }
 
@@ -155,6 +164,16 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
         internalTank.setFluid(FluidStack.EMPTY);
     }
 
+    public TankMode getTankMode() {
+        return tankMode;
+    }
+
+    public void setTankMode(TankMode tankMode) {
+        this.tankMode = tankMode;
+    }
+
+    public IIntArray getFields() {return fields; }
+
     @Override
     public void read(CompoundNBT tag) {
         CompoundNBT invTag = tag.getCompound("inv");
@@ -163,16 +182,21 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
         if (tag.contains("tank")) {
             internalTank.readFromNBT(tag.getCompound("tank"));
         }
+        if (tag.contains("TankMode")) {
+            tankMode = EnumUtils.byOrdinal(tag.getByte("TankMode"), TankMode.NORMAL);
+        }
     }
 
     @Override
     public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
         internalHandler.ifPresent(h -> {
             CompoundNBT compound = ((INBTSerializable<CompoundNBT>) h).serializeNBT();
             tag.put("inv", compound);
         });
         tag.put("tank", internalTank.writeToNBT(new CompoundNBT()));
-        return super.write(tag);
+        tag.putByte("TankMode", (byte) tankMode.ordinal());
+        return tag;
     }
 
     @Override
@@ -182,7 +206,8 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
             CompoundNBT compound = ((INBTSerializable<CompoundNBT>) h).serializeNBT();
             tags.put("inv", compound);
         });
-        tags.put("tank", this.internalTank.writeToNBT(new CompoundNBT()));
+        tags.put("tank", internalTank.writeToNBT(new CompoundNBT()));
+        tags.putByte("TankMode", (byte) tankMode.ordinal());
         return tags;
     }
 
@@ -193,6 +218,10 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
         }
         CompoundNBT invTag = tag.getCompound("inv");
         internalHandler.ifPresent(h -> ((INBTSerializable<CompoundNBT>) h).deserializeNBT(invTag));
+        if (tag.contains("TankMode")) {
+            tankMode = EnumUtils.byOrdinal(tag.getByte("TankMode"), TankMode.NORMAL);
+        }
+
     }
 
 
@@ -200,14 +229,18 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         CompoundNBT tag = new CompoundNBT();
-        tag = write(tag);
+        tag.putByte("TankMode", (byte) tankMode.ordinal());
         return new SUpdateTileEntityPacket(getPos(), 1, tag);
     }
 
+
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        super.onDataPacket(net, pkt);
         CompoundNBT tag = pkt.getNbtCompound();
-        read(tag);
+        if (tag.contains("TankMode")) {
+            tankMode = EnumUtils.byOrdinal(tag.getByte("TankMode"), TankMode.NORMAL);
+        }
     }
 
     private ItemStackHandler createInputHandler() {

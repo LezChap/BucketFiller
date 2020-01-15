@@ -1,8 +1,10 @@
 package com.reallysimpletanks.blocks;
 
 import com.reallysimpletanks.ReallySimpleTanks;
+import com.reallysimpletanks.api.TankMode;
 import com.reallysimpletanks.network.DumpTank;
 import com.reallysimpletanks.network.Networking;
+import com.reallysimpletanks.utils.EnumUtils;
 import com.reallysimpletanks.utils.SlotBucketHandler;
 import com.reallysimpletanks.utils.SlotEmptyBucketHandler;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,6 +15,7 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.IntArray;
@@ -36,8 +39,9 @@ public class BasicTankContainer extends Container {
     private BlockPos pos;
 
 
-    public BasicTankContainer(int windowId, BlockPos posIn, PlayerInventory inv) {
+    public BasicTankContainer(int windowId, BlockPos posIn, PlayerInventory inv, TankMode tankMode) {
             this(windowId, posIn, inv, new BasicTankTileEntity(), new IntArray(BasicTankTileEntity.FIELDS_COUNT));
+            fields.set(2, tankMode.ordinal());
     }
 
 
@@ -66,7 +70,7 @@ public class BasicTankContainer extends Container {
         });
         layoutPlayerInventorySlots(10, 70);
 
-        trackIntArray(field);
+        trackIntArray(this.fields);
     }
 
     @SuppressWarnings("deprecation")
@@ -87,6 +91,20 @@ public class BasicTankContainer extends Container {
     }
 
     public IIntArray getFields() {return fields;}
+
+    public TankMode getTankMode() {
+        //ReallySimpleTanks.LOGGER.debug(tileEntity.getWorld());
+        ReallySimpleTanks.LOGGER.debug(EnumUtils.byOrdinal(fields.get(2), TankMode.NORMAL));
+        return EnumUtils.byOrdinal(fields.get(2), TankMode.NORMAL);
+    }
+
+    public void setTankMode(TankMode mode) {
+        fields.set(2, mode.ordinal());
+    }
+
+    public TileEntity getTileEntity() {
+        return tileEntity;
+    }
 
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {

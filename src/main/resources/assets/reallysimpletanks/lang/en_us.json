@@ -1,5 +1,6 @@
 {
   "block.reallysimpletanks.basictank": "Basic Tank",
-  "misc.reallysimpletanks.dump_tank1": "Hold CTRL and Left-Click to empty(void)",
-  "misc.reallysimpletanks.dump_tank2": "        the contents of the tank."
+  "misc.reallysimpletanks.dump_tank1": "CTRL + Left-Click",
+  "misc.reallysimpletanks.dump_tank2": "to dump the tank.",
+  "misc.reallysimpletanks.tankMode": "Mode: %s"
 }

@@ -25,6 +25,11 @@
                   "source": "tank",
                   "target": "BlockEntityTag.tank",
                   "op": "replace"
+                },
+                {
+                  "source": "TankMode",
+                  "target": "BlockEntityTag.TankMode",
+                  "op": "replace"
                 }
               ]
             },

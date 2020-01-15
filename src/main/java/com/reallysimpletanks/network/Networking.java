@@ -22,5 +22,10 @@ public class Networking {
                 DumpTank::toBytes,
                 DumpTank::new,
                 DumpTank::handle);
+        INSTANCE.registerMessage(nextID(),
+                TankModePacket.class,
+                TankModePacket::toBytes,
+                TankModePacket::new,
+                TankModePacket::handle);
     }
 }
