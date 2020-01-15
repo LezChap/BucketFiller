@@ -2,5 +2,13 @@
   "block.reallysimpletanks.basictank": "Basic Tank",
   "misc.reallysimpletanks.dump_tank1": "CTRL + Left-Click",
   "misc.reallysimpletanks.dump_tank2": "to dump the tank.",
-  "misc.reallysimpletanks.tankMode": "Mode: %s"
+  "misc.reallysimpletanks.tankMode": "Mode: %s",
+  "misc.reallysimpletanks.next_mode": "Next Mode --> %s",
+  "misc.reallysimpletanks.normal_tooltip1": "Operating in Normal Tank mode.",
+  "misc.reallysimpletanks.normal_tooltip2": " No special handling included.",
+  "misc.reallysimpletanks.excess_tooltip1": "Operating in Void Excess mode.",
+  "misc.reallysimpletanks.excess_tooltip2": "   Accepts and Voids fluids",
+  "misc.reallysimpletanks.excess_tooltip3": "  exceeding maximum capacity.",
+  "misc.reallysimpletanks.pump_tooltip1": "Operating in Pump Tank mode.",
+  "misc.reallysimpletanks.pump_tooltip2": " PUMP NOT YET IMPLEMENTED"
 }

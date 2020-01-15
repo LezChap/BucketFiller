@@ -93,8 +93,7 @@ public class BasicTankContainer extends Container {
     public IIntArray getFields() {return fields;}
 
     public TankMode getTankMode() {
-        //ReallySimpleTanks.LOGGER.debug(tileEntity.getWorld());
-        ReallySimpleTanks.LOGGER.debug(EnumUtils.byOrdinal(fields.get(2), TankMode.NORMAL));
+        //ReallySimpleTanks.LOGGER.debug(EnumUtils.byOrdinal(fields.get(2), TankMode.NORMAL));
         return EnumUtils.byOrdinal(fields.get(2), TankMode.NORMAL);
     }
 

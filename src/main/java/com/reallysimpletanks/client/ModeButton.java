@@ -29,8 +29,7 @@ public class ModeButton extends Button {
 
     private void cycleMode() {
         int ordinal = container.getTankMode().ordinal() + 1;
-        if (ordinal >= TankMode.values().length)
-            ordinal = 0;
+        if (ordinal >= TankMode.values().length) ordinal = 0;
         container.setTankMode(EnumUtils.byOrdinal(ordinal, TankMode.NORMAL));
         setLabel();
     }
