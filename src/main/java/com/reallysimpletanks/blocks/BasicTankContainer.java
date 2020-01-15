@@ -1,14 +1,13 @@
 package com.reallysimpletanks.blocks;
 
-import com.reallysimpletanks.ReallySimpleTanks;
 import com.reallysimpletanks.api.IUpgradeItem;
 import com.reallysimpletanks.api.TankMode;
 import com.reallysimpletanks.network.DumpTank;
 import com.reallysimpletanks.network.Networking;
 import com.reallysimpletanks.utils.EnumUtils;
-import com.reallysimpletanks.utils.SlotBucketHandler;
-import com.reallysimpletanks.utils.SlotEmptyBucketHandler;
-import com.reallysimpletanks.utils.SlotUpgradeItem;
+import com.reallysimpletanks.inventory.SlotBucketHandler;
+import com.reallysimpletanks.inventory.SlotEmptyBucketHandler;
+import com.reallysimpletanks.inventory.SlotUpgradeItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluid;

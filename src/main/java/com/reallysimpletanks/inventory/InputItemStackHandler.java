@@ -1,28 +1,28 @@
-package com.reallysimpletanks.utils;
+package com.reallysimpletanks.inventory;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class OutputItemStackHandler extends ItemStackHandler {
+public class InputItemStackHandler extends ItemStackHandler {
     private final ItemStackHandler internalSlot;
 
-    public OutputItemStackHandler(ItemStackHandler hidden) {
+    public InputItemStackHandler(ItemStackHandler hidden) {
         super();
         internalSlot = hidden;
     }
 
     @Nonnull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        return stack;
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        return ItemStack.EMPTY;
     }
 
     @Nonnull
     @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        return internalSlot.extractItem(slot, amount, simulate);
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        return internalSlot.insertItem(slot, stack, simulate);
     }
 
     @Override
@@ -40,4 +40,6 @@ public class OutputItemStackHandler extends ItemStackHandler {
     public ItemStack getStackInSlot(int slot) {
         return internalSlot.getStackInSlot(slot);
     }
+
+
 }

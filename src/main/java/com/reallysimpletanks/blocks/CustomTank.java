@@ -1,7 +1,6 @@
-package com.reallysimpletanks.utils;
+package com.reallysimpletanks.blocks;
 
 import com.reallysimpletanks.api.TankMode;
-import com.reallysimpletanks.blocks.BasicTankTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;

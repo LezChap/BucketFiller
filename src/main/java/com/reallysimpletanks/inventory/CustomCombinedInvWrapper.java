@@ -1,4 +1,4 @@
-package com.reallysimpletanks.utils;
+package com.reallysimpletanks.inventory;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
