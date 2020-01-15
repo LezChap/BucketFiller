@@ -7,6 +7,7 @@ import com.reallysimpletanks.network.Networking;
 import com.reallysimpletanks.utils.EnumUtils;
 import com.reallysimpletanks.utils.SlotBucketHandler;
 import com.reallysimpletanks.utils.SlotEmptyBucketHandler;
+import com.reallysimpletanks.utils.SlotUpgradeItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluid;
@@ -67,6 +68,10 @@ public class BasicTankContainer extends Container {
             addSlot(new SlotEmptyBucketHandler(h, 1, 118, 8));
             addSlot(new SlotEmptyBucketHandler(h, 2, 46, 44));
             addSlot(new SlotBucketHandler(h, 3, 118, 44));
+
+            addSlot(new SlotUpgradeItem(h, 4, 154, 8));
+            addSlot(new SlotUpgradeItem(h, 4, 154, 26));
+            addSlot(new SlotUpgradeItem(h, 4, 154, 44));
         });
         layoutPlayerInventorySlots(10, 70);
 
@@ -117,8 +122,8 @@ public class BasicTankContainer extends Container {
         if (slot != null && slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             itemstack = stack.copy();
-            if (index <= 3) {
-                if (!this.mergeItemStack(stack, 4, 40, true)) {
+            if (index <= 6) {
+                if (!this.mergeItemStack(stack, 7, 43, true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.onSlotChange(stack, itemstack);
@@ -131,11 +136,11 @@ public class BasicTankContainer extends Container {
                     if (!this.mergeItemStack(stack, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index < 31) {
-                    if (!this.mergeItemStack(stack, 31, 40, false)) {
+                } else if (index < 34) {
+                    if (!this.mergeItemStack(stack, 34, 43, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index < 40 && !this.mergeItemStack(stack, 4, 31, false)) {
+                } else if (index < 43 && !this.mergeItemStack(stack, 7, 34, false)) {
                     return ItemStack.EMPTY;
                 }
             }

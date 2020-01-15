@@ -1,6 +1,7 @@
 package com.reallysimpletanks.blocks;
 
 import com.reallysimpletanks.ReallySimpleTanks;
+import com.reallysimpletanks.api.IUpgradeItem;
 import com.reallysimpletanks.api.TankMode;
 import com.reallysimpletanks.utils.*;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,10 +45,11 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
     public static final int CAPACITY = FluidAttributes.BUCKET_VOLUME * 16;
     protected ItemStackHandler inputSlots;
     protected ItemStackHandler outputSlots;
+    private ItemStackHandler upgradeSlots;
     private ItemStackHandler inputSlotsWrapper;
     private ItemStackHandler outputSlotsWrapper;
     private final LazyOptional<IItemHandler> externalHandler = LazyOptional.of(() -> new CustomCombinedInvWrapper(inputSlotsWrapper, outputSlotsWrapper));
-    private final LazyOptional<IItemHandler> internalHandler = LazyOptional.of(() -> new CustomCombinedInvWrapper(inputSlots, outputSlots));
+    private final LazyOptional<IItemHandler> internalHandler = LazyOptional.of(() -> new CustomCombinedInvWrapper(inputSlots, outputSlots, upgradeSlots));
 
     protected  TankMode tankMode = TankMode.NORMAL;
 
@@ -109,6 +111,7 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
         super(BASICTANK_TILEENTITY);
         inputSlots = createInputHandler();
         outputSlots = createOutputHandler();
+        upgradeSlots = createUpgradeHandler();
         inputSlotsWrapper = new InputItemStackHandler(inputSlots);
         outputSlotsWrapper = new OutputItemStackHandler(outputSlots);
     }
@@ -302,6 +305,31 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
                 Item item = stack.getItem();
                 if (!(item instanceof BucketItem)) {
+                    return stack;
+                }
+                return super.insertItem(slot, stack, simulate);
+            }
+        };
+    }
+
+    private ItemStackHandler createUpgradeHandler() {
+        return new ItemStackHandler(3) {
+            @Override
+            protected void onContentsChanged(int slot) {
+                markDirty();
+            }
+
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                Item item = stack.getItem();
+                return item instanceof IUpgradeItem;
+            }
+
+            @Nonnull
+            @Override
+            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+                Item item = stack.getItem();
+                if (!(item instanceof IUpgradeItem)) {
                     return stack;
                 }
                 return super.insertItem(slot, stack, simulate);
