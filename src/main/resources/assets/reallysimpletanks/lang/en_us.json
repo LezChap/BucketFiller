@@ -1,5 +1,6 @@
 {
   "block.reallysimpletanks.basictank": "Basic Tank",
+  "item.reallysimpletanks.excess_upgrade": "Excess Upgrade Item",
   "misc.reallysimpletanks.dump_tank1": "CTRL + Left-Click",
   "misc.reallysimpletanks.dump_tank2": "to dump the tank.",
   "misc.reallysimpletanks.tankMode": "Mode: %s",

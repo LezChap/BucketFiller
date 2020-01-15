@@ -19,4 +19,10 @@ public class SlotUpgradeItem extends SlotItemHandler {
         if (item instanceof IUpgradeItem) return true;
         return super.isItemValid(stack);
     }
+
+    @Override
+    public int getItemStackLimit(@Nonnull ItemStack stack) {
+        return 1;
+    }
+
 }

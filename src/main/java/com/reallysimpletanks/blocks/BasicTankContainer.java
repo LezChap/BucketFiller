@@ -1,6 +1,7 @@
 package com.reallysimpletanks.blocks;
 
 import com.reallysimpletanks.ReallySimpleTanks;
+import com.reallysimpletanks.api.IUpgradeItem;
 import com.reallysimpletanks.api.TankMode;
 import com.reallysimpletanks.network.DumpTank;
 import com.reallysimpletanks.network.Networking;
@@ -70,8 +71,8 @@ public class BasicTankContainer extends Container {
             addSlot(new SlotBucketHandler(h, 3, 118, 44));
 
             addSlot(new SlotUpgradeItem(h, 4, 154, 8));
-            addSlot(new SlotUpgradeItem(h, 4, 154, 26));
-            addSlot(new SlotUpgradeItem(h, 4, 154, 44));
+            addSlot(new SlotUpgradeItem(h, 5, 154, 26));
+            addSlot(new SlotUpgradeItem(h, 6, 154, 44));
         });
         layoutPlayerInventorySlots(10, 70);
 
@@ -134,6 +135,10 @@ public class BasicTankContainer extends Container {
                     }
                 } else if (stack.getItem() instanceof BucketItem && stack.getItem() != Items.BUCKET) {
                     if (!this.mergeItemStack(stack, 0, 1, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (stack.getItem() instanceof IUpgradeItem) {
+                    if (!this.mergeItemStack(stack, 4, 7, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else if (index < 34) {

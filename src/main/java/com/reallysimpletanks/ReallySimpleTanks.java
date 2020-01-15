@@ -2,6 +2,7 @@ package com.reallysimpletanks;
 
 import com.reallysimpletanks.api.TankMode;
 import com.reallysimpletanks.blocks.*;
+import com.reallysimpletanks.items.ExcessUpgradeItem;
 import com.reallysimpletanks.setup.ClientProxy;
 import com.reallysimpletanks.setup.IProxy;
 import com.reallysimpletanks.setup.ModSetup;
@@ -58,6 +59,7 @@ public class ReallySimpleTanks {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             event.getRegistry().register(new BlockItem(ModBlocks.BASICTANK, new Item.Properties().maxStackSize(1).group(ItemGroup.MISC)).setRegistryName("basictank"));
+            event.getRegistry().register(new ExcessUpgradeItem());
         }
 
         @SubscribeEvent

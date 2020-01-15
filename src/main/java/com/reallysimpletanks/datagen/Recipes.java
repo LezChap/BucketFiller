@@ -1,6 +1,7 @@
 package com.reallysimpletanks.datagen;
 
 import com.reallysimpletanks.blocks.ModBlocks;
+import com.reallysimpletanks.items.ModItems;
 import net.minecraft.advancements.criterion.InventoryChangeTrigger;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
@@ -29,6 +30,16 @@ public class Recipes extends RecipeProvider {
                 .key('G', Blocks.GLASS)
                 .setGroup("reallysimpletanks")
                 .addCriterion("iron_ingot", InventoryChangeTrigger.Instance.forItems(Items.IRON_INGOT))
+                .build(consumer);
+        ShapedRecipeBuilder.shapedRecipe(ModItems.EXCESS_UPGRADE_ITEM)
+                .patternLine("IOI")
+                .patternLine("O#O")
+                .patternLine("IOI")
+                .key('I', Items.IRON_INGOT)
+                .key('#', Items.IRON_BARS)
+                .key('O', Blocks.OBSIDIAN)
+                .setGroup("reallysimpletanks")
+                .addCriterion("iron_ingot",  InventoryChangeTrigger.Instance.forItems(Items.IRON_INGOT))
                 .build(consumer);
     }
 }

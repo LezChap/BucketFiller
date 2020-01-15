@@ -3,6 +3,7 @@ package com.reallysimpletanks.blocks;
 import com.reallysimpletanks.ReallySimpleTanks;
 import com.reallysimpletanks.api.IUpgradeItem;
 import com.reallysimpletanks.api.TankMode;
+import com.reallysimpletanks.items.ExcessUpgradeItem;
 import com.reallysimpletanks.utils.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -52,7 +53,8 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
     private final LazyOptional<IItemHandler> internalHandler = LazyOptional.of(() -> new CustomCombinedInvWrapper(inputSlots, outputSlots, upgradeSlots));
 
     protected  TankMode tankMode = TankMode.NORMAL;
-
+    private boolean isExcessInstalled;
+    private boolean isPumpInstalled;
 
     protected CustomTank internalTank = new CustomTank(CAPACITY, this){
         @Override
@@ -66,7 +68,6 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
             super.setFluid(stack);
             this.onContentsChanged();
         }
-
 
     };
 
@@ -114,6 +115,7 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
         upgradeSlots = createUpgradeHandler();
         inputSlotsWrapper = new InputItemStackHandler(inputSlots);
         outputSlotsWrapper = new OutputItemStackHandler(outputSlots);
+        getInstalledUpgrades();
     }
 
     @Override
@@ -146,6 +148,7 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
                     h.insertItem(3, fillResult.getResult(), false);
                 }
             }
+
             //legacy debug code
             /*stack = h.getStackInSlot(3);
             item = stack.getItem();
@@ -175,7 +178,21 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
         this.tankMode = tankMode;
     }
 
-    public IIntArray getFields() {return fields; }
+    public IIntArray getFields() { return fields; }
+
+    public boolean getExcessInstalled() { return isExcessInstalled; }
+
+    public boolean getPumpInstalled() { return isPumpInstalled; }
+
+    public void getInstalledUpgrades() {
+        isPumpInstalled = false;
+        isExcessInstalled = false;
+        int count = upgradeSlots.getSlots();
+        for (int i = 0; i < count; i++) {
+            Item item = upgradeSlots.getStackInSlot(i).getItem();
+            if (item instanceof ExcessUpgradeItem) isExcessInstalled = true;
+        }
+    }
 
     @Override
     public void read(CompoundNBT tag) {
@@ -227,7 +244,6 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
 
     }
 
-
     @Nullable
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
@@ -235,7 +251,6 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
         tag.putByte("TankMode", (byte) tankMode.ordinal());
         return new SUpdateTileEntityPacket(getPos(), 1, tag);
     }
-
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
@@ -317,6 +332,7 @@ public class BasicTankTileEntity extends TileEntity implements ITickableTileEnti
             @Override
             protected void onContentsChanged(int slot) {
                 markDirty();
+                getInstalledUpgrades();
             }
 
             @Override

@@ -8,9 +8,9 @@ Roadmap for the near future:
 - [x] Ability to fill/empty the tank by right clicking with a bucket. (v1.01)
 - [x] Confirm pipes can fill/extract fluids (or implement that functionality if it isn't working) --(Tested to work with: Xnet, Floppers, and Refined Storage, but needs to put buckets from automation in the correct slots) (v1.0)
 - [x] Got automation inputting buckets into the correct slots (fixes above).  All slots will only accept the proper bucket types. (v1.01)
+- [x] Ability to void excess fluids and empty the tank. (v1.02)
 - [ ] Multiple versions of the Tank with larger capacities.
 - [ ] Ability to suck or push fluids into adjacent blocks which support that functionality (other tanks or machines with tanks)
-- [ ] Ability to void excess fluids and empty the tank.
 - [ ] Better block models which render the tank's fluid level externally.
 
 

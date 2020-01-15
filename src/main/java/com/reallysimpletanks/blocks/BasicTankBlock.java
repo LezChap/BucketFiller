@@ -85,7 +85,8 @@ public class BasicTankBlock extends Block implements TOPInfoProvider {
     public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         CompoundNBT compoundnbt = stack.getChildTag("BlockEntityTag");
-        if (compoundnbt == null) { return; }
+        if (compoundnbt == null) return;
+
         ITextComponent text = new TranslationTextComponent("%s: %s mB", "Capacity", String.format("%,d", BasicTankTileEntity.CAPACITY));
         Style style = new Style();
         if (compoundnbt.contains("tank")) {

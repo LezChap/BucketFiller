@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "reallysimpletanks:item/excess_upgrade"
+  }
+}

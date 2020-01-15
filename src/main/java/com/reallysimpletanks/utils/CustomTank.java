@@ -33,12 +33,12 @@ public class CustomTank extends FluidTank {
             return 0;
         }
 
-        if (!fluid.isFluidEqual(resource)) {
+        if (!fluid.isFluidEqual(resource) && !fluid.isEmpty()) {
             return 0;
         }
 
         if (action.simulate()) {
-            if (getTankMode() == TankMode.EXCESS) return resource.getAmount();
+            if (getTankMode() == TankMode.EXCESS && ((BasicTankTileEntity) tileEntity).getExcessInstalled()) return resource.getAmount();
 
             if (fluid.isEmpty()) {
                 return Math.min(capacity, resource.getAmount());
@@ -49,7 +49,7 @@ public class CustomTank extends FluidTank {
         if (fluid.isEmpty()) {
             fluid = new FluidStack(resource, Math.min(capacity, resource.getAmount()));
             onContentsChanged();
-            if (getTankMode() == TankMode.EXCESS) return resource.getAmount();
+            if (getTankMode() == TankMode.EXCESS && ((BasicTankTileEntity) tileEntity).getExcessInstalled()) return resource.getAmount();
             return fluid.getAmount();
         }
 
@@ -64,7 +64,7 @@ public class CustomTank extends FluidTank {
 
         if (filled > 0)  onContentsChanged();
 
-        if (getTankMode() == TankMode.EXCESS) return resource.getAmount();
+        if (getTankMode() == TankMode.EXCESS && ((BasicTankTileEntity) tileEntity).getExcessInstalled()) return resource.getAmount();
         return filled;
     }
 
